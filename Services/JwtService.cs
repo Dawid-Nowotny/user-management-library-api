@@ -27,7 +27,9 @@ namespace library_api.Services
 			new Claim(ClaimTypes.Name, user.Username)
 		}),
 				Expires = DateTime.UtcNow.Add(expiration),
-				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+				Audience = _configuration["Jwt:Audience"],
+				Issuer = _configuration["Jwt:Issuer"]
 			};
 
 			var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -42,8 +44,8 @@ namespace library_api.Services
 			{
 				ValidateIssuerSigningKey = true,
 				IssuerSigningKey = new SymmetricSecurityKey(key),
-				ValidateIssuer = false,
-				ValidateAudience = false,
+				ValidateIssuer = true,
+				ValidateAudience = true,
 				ValidateLifetime = true,
 				ClockSkew = TimeSpan.Zero
 			};
@@ -60,8 +62,8 @@ namespace library_api.Services
 			{
 				ValidateIssuerSigningKey = true,
 				IssuerSigningKey = new SymmetricSecurityKey(key),
-				ValidateIssuer = false,
-				ValidateAudience = false,
+				ValidateIssuer = true,
+				ValidateAudience = true,
 				ValidateLifetime = true,
 				ClockSkew = TimeSpan.Zero
 			};
