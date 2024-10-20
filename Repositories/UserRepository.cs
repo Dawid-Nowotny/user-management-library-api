@@ -27,5 +27,15 @@ namespace library_api.Repositories
 			_context.Users.Add(user);
 			await _context.SaveChangesAsync();
 		}
+
+		public async Task<IEnumerable<User>> GetAllUsersAsync()
+		{
+			return await _context.Users.ToListAsync();
+		}
+
+		public async Task<User?> GetUserInfoAsync(string identifier)
+		{
+			return await _context.Users.FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
+		}
 	}
 }
