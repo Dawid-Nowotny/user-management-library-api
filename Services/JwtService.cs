@@ -24,7 +24,8 @@ namespace library_api.Services
 			{
 				Subject = new ClaimsIdentity(new[]
 				{
-			new Claim(ClaimTypes.Name, user.Username)
+			new Claim(ClaimTypes.Name, user.Username),
+			new Claim(ClaimTypes.Role, user.Role.ToString())
 		}),
 				Expires = DateTime.UtcNow.Add(expiration),
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
