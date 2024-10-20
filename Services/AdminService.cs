@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using library_api.DTOs;
+using library_api.Exceptions;
 using library_api.Models;
 using library_api.Repositories.Interfaces;
 using library_api.Services.Interfaces;
@@ -24,7 +25,7 @@ namespace library_api.Services
 			return _mapper.Map<IEnumerable<UserDto>>(users);
 		}
 
-		public async Task<User> GetUserInfoAsync(string identifier)
+		public async Task<UserDto> GetUserInfoAsync(string identifier)
 		{
 			var user = await _userRepository.GetUserInfoAsync(identifier);
 
@@ -33,7 +34,29 @@ namespace library_api.Services
 				throw new KeyNotFoundException("User not found with the provided identifier.");
 			}
 
-			return user;
+			return _mapper.Map<UserDto>(user);
+		}
+
+		public async Task DeleteUserAsync(string identifier)
+		{
+			var user = await _userRepository.GetUserInfoAsync(identifier);
+
+			if (user == null)
+			{
+				throw new KeyNotFoundException("User not found.");
+			}
+
+			if (user.Role == UserRole.Admin)
+			{
+				throw new UserDeletionException("Cannot delete an administrator.");
+			}
+
+			bool deleted = await _userRepository.DeleteAsync(user);
+
+			if (!deleted)
+			{
+				throw new UserDeletionException("Failed to delete the user");
+			}
 		}
 	}
 }

@@ -37,5 +37,16 @@ namespace library_api.Repositories
 		{
 			return await _context.Users.FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
 		}
+
+		public async Task<bool> DeleteAsync(User user)
+		{
+			if (user != null)
+			{
+				_context.Users.Remove(user);
+				await _context.SaveChangesAsync();
+				return true;
+			}
+			return false;
+		}
 	}
 }

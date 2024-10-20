@@ -9,5 +9,6 @@ namespace library_api.Repositories.Interfaces
 		Task AddAsync(User user);
 		Task<IEnumerable<User>> GetAllUsersAsync();
 		Task<User?> GetUserInfoAsync(string identifier);
+		Task<bool> DeleteAsync(User user);
 	}
 }

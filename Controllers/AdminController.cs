@@ -1,4 +1,5 @@
-﻿using library_api.Models;
+﻿using library_api.Exceptions;
+using library_api.Models;
 using library_api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ namespace library_api.Controllers
 			return Ok(users);
 		}
 
-		[HttpGet("user")]
+		[HttpGet("user/{identifier}")]
 		public async Task<IActionResult> GetUserInfo(string identifier)
 		{
 			try
@@ -33,6 +34,24 @@ namespace library_api.Controllers
 				return Ok(user);
 			}
 			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+		}
+		[HttpDelete("user/{identifier}")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> DeleteUser(string identifier)
+		{
+			try
+			{
+				await _adminService.DeleteUserAsync(identifier);
+				return NoContent();
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (UserDeletionException e)
 			{
 				return Conflict(e.Message);
 			}
