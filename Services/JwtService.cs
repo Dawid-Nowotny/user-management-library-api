@@ -37,23 +37,6 @@ namespace library_api.Services
 			return tokenHandler.WriteToken(token);
 		}
 
-		public ClaimsPrincipal ValidateToken(string token)
-		{
-			var tokenHandler = new JwtSecurityTokenHandler();
-			var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-			var validationParameters = new TokenValidationParameters
-			{
-				ValidateIssuerSigningKey = true,
-				IssuerSigningKey = new SymmetricSecurityKey(key),
-				ValidateIssuer = true,
-				ValidateAudience = true,
-				ValidateLifetime = true,
-				ClockSkew = TimeSpan.Zero
-			};
-
-			return tokenHandler.ValidateToken(token, validationParameters, out _);
-		}
-
 		public ClaimsPrincipal? ValidateRefreshToken(string token)
 		{
 			var tokenHandler = new JwtSecurityTokenHandler();
@@ -64,7 +47,9 @@ namespace library_api.Services
 				ValidateIssuerSigningKey = true,
 				IssuerSigningKey = new SymmetricSecurityKey(key),
 				ValidateIssuer = true,
+				ValidIssuer = _configuration["Jwt:Issuer"],
 				ValidateAudience = true,
+				ValidAudience = _configuration["Jwt:Audience"],
 				ValidateLifetime = true,
 				ClockSkew = TimeSpan.Zero
 			};
