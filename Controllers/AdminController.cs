@@ -1,4 +1,5 @@
-﻿using library_api.Exceptions;
+﻿using library_api.DTOs;
+using library_api.Exceptions;
 using library_api.Models;
 using library_api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,7 @@ namespace library_api.Controllers
 				return NotFound(e.Message);
 			}
 		}
+
 		[HttpDelete("user/{identifier}")]
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteUser(string identifier)
@@ -54,6 +56,25 @@ namespace library_api.Controllers
 			catch (UserDeletionException e)
 			{
 				return Conflict(e.Message);
+			}
+		}
+
+		[HttpPatch("user/{identifier}/role")]
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> ChanChangeUserRole(string identifier, [FromBody] ChangeUserRoleDto newRole)
+		{
+			try
+			{
+				await _adminService.ChangeUserRoleAsync(identifier, newRole);
+				return NoContent();
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				return StatusCode(403, e.Message);
 			}
 		}
 	}

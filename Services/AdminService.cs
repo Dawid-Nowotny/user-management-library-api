@@ -37,6 +37,28 @@ namespace library_api.Services
 			return _mapper.Map<UserDto>(user);
 		}
 
+		public async Task ChangeUserRoleAsync(string identifier, ChangeUserRoleDto changeUserRoleDto)
+		{
+			var user = await _userRepository.GetUserInfoAsync(identifier);
+
+			if (user == null)
+			{
+				throw new KeyNotFoundException("User not found with the provided identifier.");
+			}
+
+			if (user.Role == UserRole.Admin && changeUserRoleDto.NewRole != UserRole.Admin)
+			{
+				throw new UnauthorizedAccessException("Cannot downgrade an Admin to another role.");
+			}
+
+			if (changeUserRoleDto.NewRole == UserRole.Admin)
+			{
+				throw new UnauthorizedAccessException("Cannot assign Admin role to another user.");
+			}
+
+			await _userRepository.UpdateAsync(user, changeUserRoleDto.NewRole);
+		}
+
 		public async Task DeleteUserAsync(string identifier)
 		{
 			var user = await _userRepository.GetUserInfoAsync(identifier);

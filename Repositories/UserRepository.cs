@@ -8,6 +8,7 @@ namespace library_api.Repositories
 	public class UserRepository : IUserRepository
 	{
 		public readonly ApplicationDbContext _context;
+
 		public UserRepository(ApplicationDbContext context)
 		{
 			_context = context;
@@ -36,6 +37,13 @@ namespace library_api.Repositories
 		public async Task<User?> GetUserInfoAsync(string identifier)
 		{
 			return await _context.Users.FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
+		}
+
+		public async Task UpdateAsync(User user, UserRole newRole)
+		{
+			user.Role = newRole;
+			_context.Users.Update(user);
+			await _context.SaveChangesAsync();
 		}
 
 		public async Task<bool> DeleteAsync(User user)

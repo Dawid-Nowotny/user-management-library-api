@@ -1,4 +1,5 @@
-﻿using library_api.Models;
+﻿using library_api.DTOs;
+using library_api.Models;
 
 namespace library_api.Repositories.Interfaces
 {
@@ -10,5 +11,6 @@ namespace library_api.Repositories.Interfaces
 		Task<IEnumerable<User>> GetAllUsersAsync();
 		Task<User?> GetUserInfoAsync(string identifier);
 		Task<bool> DeleteAsync(User user);
+		Task UpdateAsync(User user, UserRole newRole);
 	}
 }
