@@ -38,6 +38,11 @@ namespace library_api.Controllers
 		[HttpPost("login")]
 		public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
 		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
 			try
 			{
 				var tokens = await _authService.LoginAsync(loginUserDto);
@@ -52,7 +57,7 @@ namespace library_api.Controllers
 
 				return Ok(new
 				{
-					accessToken = tokens.accessToken
+					tokens.accessToken
 				});
 			}
 			catch (UnauthorizedAccessException e)
@@ -77,13 +82,24 @@ namespace library_api.Controllers
 
 				return Ok(new
 				{
-					accessToken = newAccessToken
+					newAccessToken
 				});
 			}
 			catch (SecurityTokenException e)
 			{
 				return Conflict(e.Message);
 			}
+		}
+
+		[HttpPost("logout")]
+		public IActionResult Logout()
+		{
+			Response.Cookies.Append("refreshToken", "", new CookieOptions
+			{
+				Expires = DateTime.UtcNow.AddDays(-1),
+			});
+
+			return NoContent();
 		}
 	}
 }
