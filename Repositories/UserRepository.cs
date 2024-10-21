@@ -39,9 +39,8 @@ namespace library_api.Repositories
 			return await _context.Users.FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
 		}
 
-		public async Task UpdateAsync(User user, UserRole newRole)
+		public async Task UpdateAsync(User user)
 		{
-			user.Role = newRole;
 			_context.Users.Update(user);
 			await _context.SaveChangesAsync();
 		}

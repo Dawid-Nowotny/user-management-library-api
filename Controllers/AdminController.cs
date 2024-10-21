@@ -59,7 +59,7 @@ namespace library_api.Controllers
 			}
 		}
 
-		[HttpPatch("user/{identifier}/role")]
+		[HttpPut("user/{identifier}/role")]
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> ChanChangeUserRole(string identifier, [FromBody] ChangeUserRoleDto newRole)
 		{
