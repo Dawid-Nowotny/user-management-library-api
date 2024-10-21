@@ -89,7 +89,7 @@ namespace library_api.Services
 			return newAccessToken;
 		}
 
-		string HashPassword(string password)
+		public string HashPassword(string password)
 		{
 			using (var sha256 = System.Security.Cryptography.SHA256.Create())
 			{
@@ -98,7 +98,7 @@ namespace library_api.Services
 			}
 		}
 
-		private bool VerifyPassword(string inputPassword, string storedPasswordHash)
+		public bool VerifyPassword(string inputPassword, string storedPasswordHash)
 		{
 			using (var sha256 = System.Security.Cryptography.SHA256.Create())
 			{

@@ -7,5 +7,7 @@ namespace library_api.Services.Interfaces
 		Task RegisterAsync(RegisterUserDto registerUserDto);
 		Task<(string accessToken, string refreshToken)> LoginAsync(LoginUserDto loginUserDto);
 		Task<string> RefreshTokenAsync(string refreshToken);
+		string HashPassword(string password);
+		bool VerifyPassword(string inputPassword, string storedPasswordHash);
 	}
 }

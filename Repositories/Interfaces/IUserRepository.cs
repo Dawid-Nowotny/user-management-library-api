@@ -11,6 +11,6 @@ namespace library_api.Repositories.Interfaces
 		Task<IEnumerable<User>> GetAllUsersAsync();
 		Task<User?> GetUserInfoAsync(string identifier);
 		Task<bool> DeleteAsync(User user);
-		Task UpdateAsync(User user, UserRole newRole);
+		Task UpdateAsync(User user);
 	}
 }

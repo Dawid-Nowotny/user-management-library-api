@@ -56,7 +56,8 @@ namespace library_api.Services
 				throw new UnauthorizedAccessException("Cannot assign Admin role to another user.");
 			}
 
-			await _userRepository.UpdateAsync(user, changeUserRoleDto.NewRole);
+			user.Role = changeUserRoleDto.NewRole;
+			await _userRepository.UpdateAsync(user);
 		}
 
 		public async Task DeleteUserAsync(string identifier)
