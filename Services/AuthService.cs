@@ -1,4 +1,5 @@
-﻿using library_api.DTOs;
+﻿using AutoMapper;
+using library_api.DTOs;
 using library_api.Exceptions;
 using library_api.Models;
 using library_api.Repositories.Interfaces;
@@ -11,14 +12,16 @@ namespace library_api.Services
 {
 	public class AuthService : IAuthService
 	{
-		private IUserRepository _userRepository;
-		private IJwtService _jwtService;
+		private readonly IUserRepository _userRepository;
+		private readonly IJwtService _jwtService;
+		private readonly IMapper _mapper;
 
-		public AuthService(IUserRepository userRepository, IJwtService jwtService)
+
+		public AuthService(IUserRepository userRepository, IJwtService jwtService, IMapper mapper)
 		{
 			_userRepository = userRepository;
 			_jwtService = jwtService;
-
+			_mapper = mapper;
 		}
 
 		public async Task RegisterAsync(RegisterUserDto registerUserDto)
@@ -37,14 +40,8 @@ namespace library_api.Services
 
 			var hashedPassword = HashPassword(registerUserDto.Password);
 
-			var user = new User
-			{
-				Username = registerUserDto.Username,
-				Email = registerUserDto.Email,
-				Password = hashedPassword,
-				CreatedAt = DateTime.UtcNow,
-				Role = UserRole.User
-			};
+			var user = _mapper.Map<User>(registerUserDto);
+			user.Password = hashedPassword;
 
 			await _userRepository.AddAsync(user);
 		}
