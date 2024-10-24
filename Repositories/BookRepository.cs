@@ -19,6 +19,10 @@ namespace library_api.Repositories
 			_context.Books.Add(book);
 			await _context.SaveChangesAsync();
 		}
+		public async Task<IEnumerable<Book>> GetAllBooksAsync()
+		{
+			return await _context.Books.ToListAsync();
+		}
 
 		public async Task<IEnumerable<Book?>> GetBookInfoAsync(string identifier)
 		{

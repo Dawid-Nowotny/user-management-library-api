@@ -1,4 +1,5 @@
-﻿using library_api.Services;
+﻿using library_api.Models;
+using library_api.Services;
 using library_api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,13 @@ namespace library_api.Controllers
 		public BookController(IBookService bookService)
 		{
 			_bookService = bookService;
+		}
+
+		[HttpGet("all")]
+		public async Task<ActionResult<IEnumerable<Book>>> GetUsers()
+		{
+			var books = await _bookService.GetAllBooksAsync();
+			return Ok(books);
 		}
 
 		[HttpGet("{identifier}")]
