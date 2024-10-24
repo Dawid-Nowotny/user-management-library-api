@@ -19,6 +19,7 @@ namespace library_api.Repositories
 			_context.Books.Add(book);
 			await _context.SaveChangesAsync();
 		}
+
 		public async Task<IEnumerable<Book>> GetAllBooksAsync()
 		{
 			return await _context.Books.ToListAsync();
@@ -35,9 +36,15 @@ namespace library_api.Repositories
 			return await _context.Books.Where(b => b.Title.ToLower() == identifier.ToLower()).ToListAsync();
 		}
 
-		public async Task<Book?> GetBookByIsbnAsync(string isbn)
+		public async Task<Book?> GetBookByIsbnAsync(string ISBN)
 		{
-			return await _context.Books.FirstOrDefaultAsync(b => b.ISBN.ToLower() == isbn.ToLower());
+			return await _context.Books.FirstOrDefaultAsync(b => b.ISBN.ToLower() == ISBN.ToLower());
+		}
+
+		public async Task UpdateAsync(Book book)
+		{
+			_context.Books.Update(book);
+			await _context.SaveChangesAsync();
 		}
 
 		public async Task<bool> DeleteAsync(Book book)

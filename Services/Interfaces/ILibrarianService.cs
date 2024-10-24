@@ -5,6 +5,7 @@ namespace library_api.Services.Interfaces
 	public interface ILibrarianService
 	{
 		Task AddAsync(CreateBookDto createBookDto);
-		Task DeleteBookAsync(string isbn);
+		Task UpdateBookCopiesAsync(UpdateBookCopiesDto updateBookCopiesDto);
+		Task DeleteBookAsync(string ISBN);
 	}
 }

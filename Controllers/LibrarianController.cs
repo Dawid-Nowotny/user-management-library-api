@@ -37,12 +37,35 @@ namespace library_api.Controllers
 			}
 		}
 
+		[HttpPatch("book/copies")]
+		public async Task<IActionResult> UpdateBookCopies([FromBody] UpdateBookCopiesDto updateBookCopiesDto)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			try
+			{
+				await _librarianServices.UpdateBookCopiesAsync(updateBookCopiesDto);
+				return Ok("The number of copies has been updated.");
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (InvalidOperationException e)
+			{
+				return BadRequest(e.Message);
+			}
+		}
+
 		[HttpDelete("book/{isbn}")]
-		public async Task<IActionResult> DeleteUser(string isbn)
+		public async Task<IActionResult> DeleteUser(string ISBN)
 		{
 			try
 			{
-				await _librarianServices.DeleteBookAsync(isbn);
+				await _librarianServices.DeleteBookAsync(ISBN);
 				return NoContent();
 			}
 			catch (KeyNotFoundException e)
