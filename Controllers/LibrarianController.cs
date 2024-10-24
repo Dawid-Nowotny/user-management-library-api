@@ -1,4 +1,5 @@
 ﻿using library_api.DTOs;
+using library_api.Exceptions;
 using library_api.Services;
 using library_api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -12,8 +13,8 @@ namespace library_api.Controllers
 	public class LibrarianController : ControllerBase
 	{
 		private readonly ILibrarianService _librarianServices;
-		public LibrarianController(ILibrarianService librarianServices) 
-		{ 
+		public LibrarianController(ILibrarianService librarianServices)
+		{
 			_librarianServices = librarianServices;
 		}
 
@@ -25,8 +26,15 @@ namespace library_api.Controllers
 				return BadRequest(ModelState);
 			}
 
-			await _librarianServices.AddAsync(createBookDto);
-			return Ok("The book has been added.");
+			try
+			{
+				await _librarianServices.AddAsync(createBookDto);
+				return Ok("The book has been added.");
+			}
+			catch (DuplicateIsbnException e)
+			{
+				return Conflict(e.Message);
+			}
 		}
 	}
 }

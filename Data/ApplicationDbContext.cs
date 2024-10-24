@@ -22,6 +22,10 @@ namespace library_api.Data
 				.HasMany(b => b.BookRental)
 				.WithOne(br => br.Book)
 				.HasForeignKey(br => br.BookId);
+
+			modelBuilder.Entity<Book>()
+				.HasIndex(b => b.ISBN)
+				.IsUnique();
 		}
 	}
 }
