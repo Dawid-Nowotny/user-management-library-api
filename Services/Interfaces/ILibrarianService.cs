@@ -2,7 +2,7 @@
 
 namespace library_api.Services.Interfaces
 {
-	public interface ILibrarianServices
+	public interface ILibrarianService
 	{
 		Task AddAsync(CreateBookDto createBookDto);
 	}

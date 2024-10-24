@@ -8,15 +8,16 @@ namespace library_api.Controllers
 {
 	[Authorize(Roles = "Admin,Librarian")]
 	[ApiController]
+	[Route("api/librarian")]
 	public class LibrarianController : ControllerBase
 	{
-		private readonly ILibrarianServices _librarianServices;
-		public LibrarianController(ILibrarianServices librarianServices) 
+		private readonly ILibrarianService _librarianServices;
+		public LibrarianController(ILibrarianService librarianServices) 
 		{ 
 			_librarianServices = librarianServices;
 		}
 
-		[HttpPost("api/book")]
+		[HttpPost("book")]
 		public async Task<IActionResult> AddBook([FromBody] CreateBookDto createBookDto)
 		{
 			if (!ModelState.IsValid)

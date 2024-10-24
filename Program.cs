@@ -28,7 +28,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ILibrarianServices, LibrarianServices>();
+builder.Services.AddScoped<ILibrarianService, LibrarianService>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 //Converters
 builder.Services.AddControllers()

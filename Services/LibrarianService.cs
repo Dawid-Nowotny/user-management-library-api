@@ -6,12 +6,12 @@ using library_api.Services.Interfaces;
 
 namespace library_api.Services
 {
-	public class LibrarianServices : ILibrarianServices
+	public class LibrarianService : ILibrarianService
 	{
 		private readonly IBookRepository _bookRepository;
 		private readonly IMapper _mapper;
 
-		public LibrarianServices(IBookRepository bookRepository, IMapper mapper)
+		public LibrarianService(IBookRepository bookRepository, IMapper mapper)
 		{
 			_bookRepository = bookRepository;
 			_mapper = mapper;
