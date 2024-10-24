@@ -4,6 +4,9 @@ using library_api.Exceptions;
 using library_api.Models;
 using library_api.Repositories.Interfaces;
 using library_api.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using System.Data.SqlClient;
 
 namespace library_api.Services
 {
@@ -20,14 +23,17 @@ namespace library_api.Services
 
 		public async Task AddAsync(CreateBookDto createBookDto)
 		{
-			var existingBook = await _bookRepository.GetBookInfoAsync(createBookDto.ISBN);
-			if (existingBook.Any())
+			var book = _mapper.Map<Book>(createBookDto);
+
+			try
+			{
+				await _bookRepository.AddAsync(book);
+			}
+			catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx &&
+												pgEx.SqlState == "23505")
 			{
 				throw new DuplicateIsbnException($"A book with ISBN {createBookDto.ISBN} already exists.");
 			}
-
-			var book = _mapper.Map<Book>(createBookDto);
-			await _bookRepository.AddAsync(book);
 		}
 	}
 }

@@ -4,7 +4,10 @@ using library_api.Exceptions;
 using library_api.Models;
 using library_api.Repositories.Interfaces;
 using library_api.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
+using System.Data.SqlClient;
 using System.Security.Claims;
 using System.Text;
 
@@ -26,24 +29,19 @@ namespace library_api.Services
 
 		public async Task RegisterAsync(RegisterUserDto registerUserDto)
 		{
-			var existingUser = await _userRepository.GetByEmailAsync(registerUserDto.Email);
-			if (existingUser != null)
-			{
-				throw new UserAlreadyExistsException("A user with the given email already exists.");
-			}
-
-			var existingUserByUsername = await _userRepository.GetByUsernameAsync(registerUserDto.Username);
-			if (existingUserByUsername != null)
-			{
-				throw new UserAlreadyExistsException("A user with the given username already exists.");
-			}
-
 			var hashedPassword = HashPassword(registerUserDto.Password);
-
 			var user = _mapper.Map<User>(registerUserDto);
 			user.Password = hashedPassword;
 
-			await _userRepository.AddAsync(user);
+			try
+			{
+				await _userRepository.AddAsync(user);
+			}
+			catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx &&
+												pgEx.SqlState == "23505")
+			{
+				throw new UserAlreadyExistsException("A user with the given email or username already exists.");
+			}
 		}
 
 		public async Task<(string accessToken, string refreshToken)> LoginAsync(LoginUserDto loginUserDto)

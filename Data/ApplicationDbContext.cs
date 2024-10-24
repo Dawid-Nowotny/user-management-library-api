@@ -26,6 +26,14 @@ namespace library_api.Data
 			modelBuilder.Entity<Book>()
 				.HasIndex(b => b.ISBN)
 				.IsUnique();
+
+			modelBuilder.Entity<User>()
+				.HasIndex(u => u.Email)
+				.IsUnique();
+
+			modelBuilder.Entity<User>()
+				.HasIndex(u => u.Username)
+				.IsUnique();
 		}
 	}
 }
