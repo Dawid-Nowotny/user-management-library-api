@@ -2,6 +2,7 @@
 using library_api.DTOs;
 using library_api.Exceptions;
 using library_api.Models;
+using library_api.Repositories;
 using library_api.Repositories.Interfaces;
 using library_api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,25 @@ namespace library_api.Services
 												pgEx.SqlState == "23505")
 			{
 				throw new DuplicateIsbnException($"A book with ISBN {createBookDto.ISBN} already exists.");
+			}
+		}
+
+		public async Task DeleteBookAsync(string isbn)
+		{
+			var book = await _bookRepository.GetBookByIsbnAsync(isbn);
+
+			if (book == null)
+			{
+				throw new KeyNotFoundException("Book not found.");
+			}
+
+			//TODO: Add that it is not possible to delete a borrowed book
+
+			bool deleted = await _bookRepository.DeleteAsync(book);
+
+			if (!deleted)
+			{
+				throw new BookDeletionException("Failed to delete the book");
 			}
 		}
 	}

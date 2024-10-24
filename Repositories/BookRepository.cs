@@ -34,5 +34,21 @@ namespace library_api.Repositories
 
 			return await _context.Books.Where(b => b.Title.ToLower() == identifier.ToLower()).ToListAsync();
 		}
+
+		public async Task<Book?> GetBookByIsbnAsync(string isbn)
+		{
+			return await _context.Books.FirstOrDefaultAsync(b => b.ISBN.ToLower() == isbn.ToLower());
+		}
+
+		public async Task<bool> DeleteAsync(Book book)
+		{
+			if (book != null)
+			{
+				_context.Books.Remove(book);
+				await _context.SaveChangesAsync();
+				return true;
+			}
+			return false;
+		}
 	}
 }

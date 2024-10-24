@@ -36,5 +36,23 @@ namespace library_api.Controllers
 				return Conflict(e.Message);
 			}
 		}
+
+		[HttpDelete("book/{isbn}")]
+		public async Task<IActionResult> DeleteUser(string isbn)
+		{
+			try
+			{
+				await _librarianServices.DeleteBookAsync(isbn);
+				return NoContent();
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (BookDeletionException e)
+			{
+				return Conflict(e.Message);
+			}
+		}
 	}
 }

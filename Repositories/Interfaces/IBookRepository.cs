@@ -7,5 +7,7 @@ namespace library_api.Repositories.Interfaces
 		Task AddAsync(Book book);
 		Task<IEnumerable<Book>> GetAllBooksAsync();
 		Task<IEnumerable<Book?>> GetBookInfoAsync(string identifier);
+		Task<Book?> GetBookByIsbnAsync(string isbn);
+		Task<bool> DeleteAsync(Book book);
 	}
 }
