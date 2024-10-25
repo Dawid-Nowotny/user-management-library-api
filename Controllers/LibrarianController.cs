@@ -77,5 +77,28 @@ namespace library_api.Controllers
 				return Conflict(e.Message);
 			}
 		}
+
+		[HttpPut("book")]
+		public async Task<IActionResult> UpdateBook([FromBody] UpdateBookDto updateBookDto)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			try
+			{
+				await _librarianServices.UpdateBookAsync(updateBookDto);
+				return Ok("The book has been updated.");
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (InvalidOperationException e)
+			{
+				return BadRequest(e.Message);
+			}
+		}
 	}
 }

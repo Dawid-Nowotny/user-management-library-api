@@ -7,5 +7,6 @@ namespace library_api.Services.Interfaces
 		Task AddAsync(CreateBookDto createBookDto);
 		Task UpdateBookCopiesAsync(UpdateBookCopiesDto updateBookCopiesDto);
 		Task DeleteBookAsync(string ISBN);
+		Task UpdateBookAsync(UpdateBookDto updateBookDto);
 	}
 }

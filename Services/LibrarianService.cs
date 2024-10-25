@@ -54,6 +54,46 @@ namespace library_api.Services
 			}
 		}
 
+		public async Task UpdateBookAsync(UpdateBookDto updateBookDto)
+		{
+			var book = await _bookRepository.GetBookByIsbnAsync(updateBookDto.ISBN);
+
+			if (book == null)
+			{
+				throw new KeyNotFoundException("Book not found.");
+			}
+
+			bool isUpdated = false;
+
+			if (!string.IsNullOrEmpty(updateBookDto.Title) && updateBookDto.Title != book.Title)
+			{
+				book.Title = updateBookDto.Title;
+				isUpdated = true;
+			}
+
+			if (!string.IsNullOrEmpty(updateBookDto.Author) && updateBookDto.Author != book.Author)
+			{
+				book.Author = updateBookDto.Author;
+				isUpdated = true;
+			}
+
+			var updatePublishedDateUtc = DateTime.SpecifyKind(updateBookDto.PublishedDate.ToUniversalTime(), DateTimeKind.Utc);
+			var bookPublishedDateUtc = DateTime.SpecifyKind(book.PublishedDate.ToUniversalTime(), DateTimeKind.Utc);
+
+			if (updatePublishedDateUtc.Date != bookPublishedDateUtc.Date)
+			{
+				book.PublishedDate = updatePublishedDateUtc;
+				isUpdated = true;
+			}
+
+			if (!isUpdated)
+			{
+				throw new InvalidOperationException("No updates were made to the book.");
+			}
+
+			await _bookRepository.UpdateAsync(book);
+		}
+
 		public async Task UpdateBookCopiesAsync(UpdateBookCopiesDto updateBookCopiesDto)
 		{
 			var book = await _bookRepository.GetBookByIsbnAsync(updateBookCopiesDto.ISBN);
