@@ -1,9 +1,13 @@
-﻿using library_api.DTOs;
+﻿using AutoMapper;
+using library_api.DTOs;
 using library_api.Exceptions;
 using library_api.Models;
 using library_api.Repositories.Interfaces;
 using library_api.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
+using System.Data.SqlClient;
 using System.Security.Claims;
 using System.Text;
 
@@ -11,42 +15,33 @@ namespace library_api.Services
 {
 	public class AuthService : IAuthService
 	{
-		private IUserRepository _userRepository;
-		private IJwtService _jwtService;
+		private readonly IUserRepository _userRepository;
+		private readonly IJwtService _jwtService;
+		private readonly IMapper _mapper;
 
-		public AuthService(IUserRepository userRepository, IJwtService jwtService)
+
+		public AuthService(IUserRepository userRepository, IJwtService jwtService, IMapper mapper)
 		{
 			_userRepository = userRepository;
 			_jwtService = jwtService;
-
+			_mapper = mapper;
 		}
 
 		public async Task RegisterAsync(RegisterUserDto registerUserDto)
 		{
-			var existingUser = await _userRepository.GetByEmailAsync(registerUserDto.Email);
-			if (existingUser != null)
-			{
-				throw new UserAlreadyExistsException("A user with the given email already exists.");
-			}
-
-			var existingUserByUsername = await _userRepository.GetByUsernameAsync(registerUserDto.Username);
-			if (existingUserByUsername != null)
-			{
-				throw new UserAlreadyExistsException("A user with the given username already exists.");
-			}
-
 			var hashedPassword = HashPassword(registerUserDto.Password);
+			var user = _mapper.Map<User>(registerUserDto);
+			user.Password = hashedPassword;
 
-			var user = new User
+			try
 			{
-				Username = registerUserDto.Username,
-				Email = registerUserDto.Email,
-				Password = hashedPassword,
-				CreatedAt = DateTime.UtcNow,
-				Role = UserRole.User
-			};
-
-			await _userRepository.AddAsync(user);
+				await _userRepository.AddAsync(user);
+			}
+			catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx &&
+												pgEx.SqlState == "23505")
+			{
+				throw new UserAlreadyExistsException("A user with the given email or username already exists.");
+			}
 		}
 
 		public async Task<(string accessToken, string refreshToken)> LoginAsync(LoginUserDto loginUserDto)

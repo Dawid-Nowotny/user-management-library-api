@@ -52,13 +52,13 @@ namespace library_api.Services
 
 			bool isUpdated = false;
 
-			if (!string.IsNullOrEmpty(updateUserDto.Username))
+			if (!string.IsNullOrEmpty(updateUserDto.Username) && updateUserDto.Username != user.Username)
 			{
 				user.Username = updateUserDto.Username;
 				isUpdated = true;
 			}
 
-			if (!string.IsNullOrEmpty(updateUserDto.Email))
+			if (!string.IsNullOrEmpty(updateUserDto.Email) && updateUserDto.Email != user.Email)
 			{
 				user.Email = updateUserDto.Email;
 				isUpdated = true;
