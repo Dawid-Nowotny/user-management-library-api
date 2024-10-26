@@ -13,6 +13,13 @@ namespace library_api.Repositories
 		{
 			_context = context;
 		}
+		public async Task<IEnumerable<BookRental>> GetAllRentalsAsync()
+		{
+			return await _context.BookRentals
+				.Include(r => r.User)
+				.Include(r => r.Book)
+				.ToListAsync();
+		}
 
 		public async Task AddAsync(BookRental rental)
 		{

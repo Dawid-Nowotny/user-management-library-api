@@ -2,7 +2,6 @@
 {
 	public class RentBookDto
 	{
-		public string Username { get; set; }
 		public string ISBN { get; set; }
 	}
 }

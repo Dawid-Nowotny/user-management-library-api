@@ -13,9 +13,19 @@ namespace library_api.Controllers
 	public class LibrarianController : ControllerBase
 	{
 		private readonly ILibrarianService _librarianServices;
-		public LibrarianController(ILibrarianService librarianServices)
+		private readonly IBookRentalService _bookRentalService;
+
+		public LibrarianController(ILibrarianService librarianServices, IBookRentalService bookRentalService)
 		{
 			_librarianServices = librarianServices;
+			_bookRentalService = bookRentalService;
+		}
+
+		[HttpGet("rentals/all")]
+		public async Task<IActionResult> GetAllRentals()
+		{
+			var rentals = await _bookRentalService.GetAllRentalsAsync();
+			return Ok(rentals);
 		}
 
 		[HttpPost("book")]

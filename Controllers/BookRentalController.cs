@@ -25,7 +25,8 @@ namespace library_api.Controllers
 
 			try
 			{
-				await _bookRentalService.RentBookAsync(request);
+				var username = User.Identity.Name;
+				await _bookRentalService.RentBookAsync(request, username);
 				return Ok("The book has been successfully rented.");
 			}
 			catch (KeyNotFoundException e)
