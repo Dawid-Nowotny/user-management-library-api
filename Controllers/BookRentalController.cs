@@ -38,7 +38,6 @@ namespace library_api.Controllers
 			}
 		}
 
-
 		[HttpPost]
 		[Authorize]
 		public async Task<IActionResult> RentBook([FromBody] RentBookDto request)
@@ -51,6 +50,26 @@ namespace library_api.Controllers
 				var username = User.Identity.Name;
 				await _bookRentalService.RentBookAsync(request, username);
 				return Ok("The book has been successfully rented.");
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (InvalidOperationException e)
+			{
+				return Conflict(e.Message);
+			}
+		}
+
+		[HttpPatch("extend")]
+		[Authorize]
+		public async Task<IActionResult> ExtendRental([FromBody] ExtendRentalDto extendRequest)
+		{
+			try
+			{
+				var username = User.Identity.Name;
+				await _bookRentalService.ExtendRentalByIsbnAsync(username, extendRequest.ISBN);
+				return Ok("The rental has been successfully extended by 7 days.");
 			}
 			catch (KeyNotFoundException e)
 			{

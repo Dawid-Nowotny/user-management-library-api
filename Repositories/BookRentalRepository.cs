@@ -37,6 +37,12 @@ namespace library_api.Repositories
 			return await query.Include(r => r.User).Include(r => r.Book).ToListAsync();
 		}
 
+		public async Task<BookRental?> GetActiveRentalByUserAndIsbnAsync(int userId, string isbn)
+		{
+			return await _context.BookRentals
+				.FirstOrDefaultAsync(r => r.UserId == userId && r.Book.ISBN == isbn && !r.IsReturned);
+		}
+
 		public async Task AddAsync(BookRental rental)
 		{
 			_context.BookRentals.Add(rental);
@@ -47,6 +53,12 @@ namespace library_api.Repositories
 		{
 			return await _context.BookRentals
 				.AnyAsync(r => r.UserId == userId && r.BookId == bookId && !r.IsReturned);
+		}
+
+		public async Task UpdateAsync(BookRental bookRental)
+		{
+			_context.BookRentals.Update(bookRental);
+			await _context.SaveChangesAsync();
 		}
 	}
 }

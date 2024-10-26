@@ -85,5 +85,35 @@ namespace library_api.Services
 			await _rentalRepository.AddAsync(rental);
 			await _bookRepository.UpdateAsync(book);
 		}
+
+		public async Task ExtendRentalByIsbnAsync(string username, string isbn)
+		{
+			var user = await _userRepository.GetByUsernameAsync(username);
+			if (user == null)
+			{
+				throw new KeyNotFoundException("User not found.");
+			}
+
+			var rental = await _rentalRepository.GetActiveRentalByUserAndIsbnAsync(user.Id, isbn);
+			if (rental == null)
+			{
+				throw new KeyNotFoundException("No active rental found for this book.");
+			}
+
+			if (rental.IsReturned)
+			{
+				throw new InvalidOperationException("Cannot extend a returned rental.");
+			}
+
+			if (rental.IsExtended)
+			{
+				throw new InvalidOperationException("This rental has already been extended.");
+			}
+
+			rental.ReturnDate = rental.ReturnDate.AddDays(7);
+			rental.IsExtended = true;
+
+			await _rentalRepository.UpdateAsync(rental);
+		}
 	}
 }
