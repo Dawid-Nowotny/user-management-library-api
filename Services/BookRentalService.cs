@@ -28,6 +28,18 @@ namespace library_api.Services
 			return _mapper.Map<IEnumerable<BookRentalDto>>(rentals);
 		}
 
+		public async Task<IEnumerable<BookRentalDto>> GetRentalsByUserAsync(string identifier, bool? isReturned = null)
+		{
+			var user = await _userRepository.GetUserInfoAsync(identifier);
+			if (user == null)
+			{
+				throw new KeyNotFoundException("User not found with the provided identifier.");
+			}
+
+			var rentals = await _rentalRepository.GetRentalsByUserAsync(user.Id, isReturned);
+			return _mapper.Map<IEnumerable<BookRentalDto>>(rentals);
+		}
+
 		public async Task RentBookAsync(RentBookDto rentBookDto, string username)
 		{
 			var user = await _userRepository.GetByUsernameAsync(username);

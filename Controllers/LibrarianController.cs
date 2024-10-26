@@ -28,6 +28,24 @@ namespace library_api.Controllers
 			return Ok(rentals);
 		}
 
+		[HttpGet("rentals/user/{identifier}")]
+		public async Task<IActionResult> GetRentalsByUser(string identifier, [FromQuery] bool? isReturned = null)
+		{
+			try
+			{
+				var rentals = await _bookRentalService.GetRentalsByUserAsync(identifier, isReturned);
+				return Ok(rentals);
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				return StatusCode(403, e.Message);
+			}
+		}
+
 		[HttpPost("book")]
 		public async Task<IActionResult> AddBook([FromBody] CreateBookDto createBookDto)
 		{

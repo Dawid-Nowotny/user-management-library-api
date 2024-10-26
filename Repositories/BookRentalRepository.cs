@@ -21,6 +21,22 @@ namespace library_api.Repositories
 				.ToListAsync();
 		}
 
+		public async Task<IEnumerable<BookRental>> GetRentalsByUserAsync(int userId, bool? isReturned = null)
+		{
+			var query = _context.BookRentals.AsQueryable();
+
+			if (isReturned.HasValue)
+			{
+				query = query.Where(r => r.UserId == userId && r.IsReturned == isReturned.Value);
+			}
+			else
+			{
+				query = query.Where(r => r.UserId == userId);
+			}
+
+			return await query.Include(r => r.User).Include(r => r.Book).ToListAsync();
+		}
+
 		public async Task AddAsync(BookRental rental)
 		{
 			_context.BookRentals.Add(rental);
