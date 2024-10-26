@@ -22,6 +22,7 @@ builder.Services.AddControllers();
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IBookRentalRepository, BookRentalRepository>();
 
 //Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -30,6 +31,7 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILibrarianService, LibrarianService>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IBookRentalService, BookRentalService>();
 
 //Converters
 builder.Services.AddControllers()

@@ -23,6 +23,10 @@ namespace library_api.Data
 				.WithOne(br => br.Book)
 				.HasForeignKey(br => br.BookId);
 
+			modelBuilder.Entity<BookRental>()
+			.HasIndex(br => new { br.BookId, br.UserId })
+			.IsUnique();
+
 			modelBuilder.Entity<Book>()
 				.HasIndex(b => b.ISBN)
 				.IsUnique();
