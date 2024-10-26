@@ -40,10 +40,6 @@ namespace library_api.Controllers
 			{
 				return NotFound(e.Message);
 			}
-			catch (UnauthorizedAccessException e)
-			{
-				return StatusCode(403, e.Message);
-			}
 		}
 
 		[HttpPost("book")]

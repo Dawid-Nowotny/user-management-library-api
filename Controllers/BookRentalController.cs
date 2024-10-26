@@ -2,6 +2,7 @@
 using library_api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace library_api.Controllers
 {
@@ -15,6 +16,28 @@ namespace library_api.Controllers
 		{
 			_bookRentalService = bookRentalService;
 		}
+
+		[HttpGet]
+		[Authorize]
+		public async Task<IActionResult> GetMyRentals([FromQuery] bool? isReturned = null)
+		{
+			try
+			{
+				var username = User.Identity.Name;
+				var rentals = await _bookRentalService.GetUserRentalsAsync(username, isReturned);
+				return Ok(rentals);
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				return StatusCode(403, e.Message);
+
+			}
+		}
+
 
 		[HttpPost]
 		[Authorize]

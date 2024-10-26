@@ -6,6 +6,7 @@ namespace library_api.Services.Interfaces
 	{
 		Task<IEnumerable<BookRentalDto>> GetAllRentalsAsync();
 		Task<IEnumerable<BookRentalDto>> GetRentalsByUserAsync(string identifier, bool? isReturned = null);
+		Task<IEnumerable<BookRentalDto>> GetUserRentalsAsync(string username, bool? isReturned = null);
 		Task RentBookAsync(RentBookDto rentBookDto, string username);
 	}
 }
