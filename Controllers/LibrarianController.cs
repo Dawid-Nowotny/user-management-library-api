@@ -124,5 +124,23 @@ namespace library_api.Controllers
 				return BadRequest(e.Message);
 			}
 		}
+
+		[HttpPatch("rentals/return")]
+		public async Task<IActionResult> ReturnBook([FromBody] ReturnBookDto returnRequest)
+		{
+			try
+			{
+				await _bookRentalService.ReturnBookAsync(returnRequest.Username, returnRequest.ISBN);
+				return Ok("The book has been successfully returned.");
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (InvalidOperationException e)
+			{
+				return Conflict(e.Message);
+			}
+		}
 	}
 }

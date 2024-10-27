@@ -86,7 +86,7 @@ namespace library_api.Services
 			await _bookRepository.UpdateAsync(book);
 		}
 
-		public async Task ExtendRentalByIsbnAsync(string username, string isbn)
+		public async Task ExtendRentalByIsbnAsync(string username, string ISBN)
 		{
 			var user = await _userRepository.GetByUsernameAsync(username);
 			if (user == null)
@@ -94,7 +94,7 @@ namespace library_api.Services
 				throw new KeyNotFoundException("User not found.");
 			}
 
-			var rental = await _rentalRepository.GetActiveRentalByUserAndIsbnAsync(user.Id, isbn);
+			var rental = await _rentalRepository.GetActiveRentalByUserAndIsbnAsync(user.Id, ISBN);
 			if (rental == null)
 			{
 				throw new KeyNotFoundException("No active rental found for this book.");
@@ -114,6 +114,33 @@ namespace library_api.Services
 			rental.IsExtended = true;
 
 			await _rentalRepository.UpdateAsync(rental);
+		}
+
+		public async Task ReturnBookAsync(string username, string ISBN)
+		{
+			var user = await _userRepository.GetByUsernameAsync(username);
+			if (user == null)
+			{
+				throw new KeyNotFoundException("User not found.");
+			}
+
+			var rental = await _rentalRepository.GetActiveRentalByUserAndIsbnAsync(user.Id, ISBN);
+			if (rental == null)
+			{
+				throw new KeyNotFoundException("No active rental found for this book.");
+			}
+						
+			var book = await _bookRepository.GetBookByIsbnAsync(ISBN);
+			if (book == null)
+			{
+				throw new KeyNotFoundException("Book not found.");
+			}
+
+			book.CopiesAvailable++;
+			rental.IsReturned = true;
+
+			await _rentalRepository.UpdateAsync(rental);
+			await _bookRepository.UpdateAsync(book);
 		}
 	}
 }
