@@ -1,6 +1,5 @@
 ﻿using library_api.DTOs;
 using library_api.Exceptions;
-using library_api.Services;
 using library_api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +12,33 @@ namespace library_api.Controllers
 	public class LibrarianController : ControllerBase
 	{
 		private readonly ILibrarianService _librarianServices;
-		public LibrarianController(ILibrarianService librarianServices)
+		private readonly IBookRentalService _bookRentalService;
+
+		public LibrarianController(ILibrarianService librarianServices, IBookRentalService bookRentalService)
 		{
 			_librarianServices = librarianServices;
+			_bookRentalService = bookRentalService;
+		}
+
+		[HttpGet("rentals/all")]
+		public async Task<IActionResult> GetAllRentals()
+		{
+			var rentals = await _bookRentalService.GetAllRentalsAsync();
+			return Ok(rentals);
+		}
+
+		[HttpGet("rentals/user/{identifier}")]
+		public async Task<IActionResult> GetRentalsByUser(string identifier, [FromQuery] bool? isReturned = null)
+		{
+			try
+			{
+				var rentals = await _bookRentalService.GetRentalsByUserAsync(identifier, isReturned);
+				return Ok(rentals);
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
 		}
 
 		[HttpPost("book")]
@@ -61,7 +84,7 @@ namespace library_api.Controllers
 		}
 
 		[HttpDelete("book/{isbn}")]
-		public async Task<IActionResult> DeleteUser(string ISBN)
+		public async Task<IActionResult> DeleteBook(string ISBN)
 		{
 			try
 			{
@@ -75,6 +98,10 @@ namespace library_api.Controllers
 			catch (BookDeletionException e)
 			{
 				return Conflict(e.Message);
+			}
+			catch (InvalidOperationException e)
+			{
+				return BadRequest(e.Message);
 			}
 		}
 
@@ -98,6 +125,24 @@ namespace library_api.Controllers
 			catch (InvalidOperationException e)
 			{
 				return BadRequest(e.Message);
+			}
+		}
+
+		[HttpPatch("rentals/return")]
+		public async Task<IActionResult> ReturnBook([FromBody] ReturnBookDto returnRequest)
+		{
+			try
+			{
+				await _bookRentalService.ReturnBookAsync(returnRequest.Username, returnRequest.ISBN);
+				return Ok("The book has been successfully returned.");
+			}
+			catch (KeyNotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
+			catch (InvalidOperationException e)
+			{
+				return Conflict(e.Message);
 			}
 		}
 	}
