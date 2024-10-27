@@ -37,6 +37,13 @@ namespace library_api.Repositories
 			return await query.Include(r => r.User).Include(r => r.Book).ToListAsync();
 		}
 
+		public async Task<IEnumerable<BookRental>> GetRentalsByBookAsync(int bookId)
+		{
+			return await _context.BookRentals
+				.Where(r => r.BookId == bookId)
+				.ToListAsync();
+		}
+
 		public async Task<BookRental?> GetActiveRentalByUserAndIsbnAsync(int userId, string isbn)
 		{
 			return await _context.BookRentals

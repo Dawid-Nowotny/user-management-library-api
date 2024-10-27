@@ -1,6 +1,5 @@
 ﻿using library_api.DTOs;
 using library_api.Exceptions;
-using library_api.Services;
 using library_api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -85,7 +84,7 @@ namespace library_api.Controllers
 		}
 
 		[HttpDelete("book/{isbn}")]
-		public async Task<IActionResult> DeleteUser(string ISBN)
+		public async Task<IActionResult> DeleteBook(string ISBN)
 		{
 			try
 			{
@@ -99,6 +98,10 @@ namespace library_api.Controllers
 			catch (BookDeletionException e)
 			{
 				return Conflict(e.Message);
+			}
+			catch (InvalidOperationException e)
+			{
+				return BadRequest(e.Message);
 			}
 		}
 

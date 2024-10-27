@@ -12,11 +12,13 @@ namespace library_api.Services
 	public class LibrarianService : ILibrarianService
 	{
 		private readonly IBookRepository _bookRepository;
+		private readonly IBookRentalRepository _rentalRepository;
 		private readonly IMapper _mapper;
 
-		public LibrarianService(IBookRepository bookRepository, IMapper mapper)
+		public LibrarianService(IBookRepository bookRepository, IBookRentalRepository rentalRepository, IMapper mapper)
 		{
 			_bookRepository = bookRepository;
+			_rentalRepository = rentalRepository;
 			_mapper = mapper;
 		}
 
@@ -44,7 +46,11 @@ namespace library_api.Services
 				throw new KeyNotFoundException("Book not found.");
 			}
 
-			//TODO: Add that it is not possible to delete a borrowed book
+			var activeRentals = await _rentalRepository.GetRentalsByBookAsync(book.Id);
+			if (activeRentals.Any(r => !r.IsReturned))
+			{
+				throw new InvalidOperationException("Cannot delete a book that is currently borrowed.");
+			}
 
 			bool deleted = await _bookRepository.DeleteAsync(book);
 
