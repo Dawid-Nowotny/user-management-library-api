@@ -96,9 +96,19 @@ namespace library_api.Repositories
 			return await query.ToListAsync();
 		}
 
-		public Task<PagedResult<Book>> GetPagedBooksAsync(int pageNumber, int pageSize)
+		public async Task<PagedResult<Book>> GetPagedBooksAsync(int pageNumber, int pageSize)
 		{
-			throw new NotImplementedException();
+			var totalCount = await _context.Books.CountAsync();
+			var items = await _context.Books
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
+
+			return new PagedResult<Book>
+			{
+				Items = items,
+				TotalCount = totalCount
+			};
 		}
 
 		public Task<IEnumerable<Book>> SearchBooksAsync(string searchTerm)

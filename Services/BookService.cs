@@ -34,15 +34,23 @@ namespace library_api.Services
 			return books.Select(book => _mapper.Map<BookDto>(book)).ToList();
 		}
 
-		public async Task<IEnumerable<BookDto>> GetFilteredAndSortedBooksAsync(string title, string author, string isbn, string sortBy)
+		public async Task<IEnumerable<BookDto>> GetFilteredAndSortedBooksAsync(FilterBooksDto filter)
 		{
-			var books = await _bookRepository.GetFilteredAndSortedBooksAsync(title, author, isbn, sortBy);
+			var books = await _bookRepository.GetFilteredAndSortedBooksAsync(filter.Title, filter.Author, filter.ISBN, filter.SortBy);
 			return _mapper.Map<IEnumerable<BookDto>>(books);
 		}
 
-		public Task<PagedResult<BookDto>> GetPagedBooksAsync(int pageNumber, int pageSize)
+		public async Task<PagedResult<BookDto>> GetPagedBooksAsync(PagedBooksDto pagedBooksDto)
 		{
-			throw new NotImplementedException();
+			var pagedResult = await _bookRepository.GetPagedBooksAsync(pagedBooksDto.PageNumber, pagedBooksDto.PageSize);
+
+			var bookDtos = _mapper.Map<IEnumerable<BookDto>>(pagedResult.Items);
+
+			return new PagedResult<BookDto>
+			{
+				Items = bookDtos,
+				TotalCount = pagedResult.TotalCount
+			};
 		}
 
 		public Task<IEnumerable<BookDto>> SearchBooksAsync(string searchTerm)

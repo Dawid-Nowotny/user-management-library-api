@@ -47,8 +47,15 @@ namespace library_api.Controllers
 		[HttpGet("filter")]
 		public async Task<IActionResult> FilterAndSortBooks([FromQuery] FilterBooksDto filter)
 		{
-			var books = await _bookService.GetFilteredAndSortedBooksAsync(filter.Title, filter.Author, filter.ISBN, filter.SortBy);
+			var books = await _bookService.GetFilteredAndSortedBooksAsync(filter);
 			return Ok(books);
+		}
+
+		[HttpGet("paged")]
+		public async Task<IActionResult> GetPagedBooks([FromQuery] PagedBooksDto pagedBooksDto)
+		{
+			var pagedResult = await _bookService.GetPagedBooksAsync(pagedBooksDto);
+			return Ok(pagedResult);
 		}
 	}
 }
