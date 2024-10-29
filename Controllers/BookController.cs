@@ -57,5 +57,12 @@ namespace library_api.Controllers
 			var pagedResult = await _bookService.GetPagedBooksAsync(pagedBooksDto);
 			return Ok(pagedResult);
 		}
+
+		[HttpGet("search")]
+		public async Task<IActionResult> SearchBooks([FromQuery] string searchTerm)
+		{
+			var books = await _bookService.SearchBooksAsync(searchTerm);
+			return Ok(books);
+		}
 	}
 }

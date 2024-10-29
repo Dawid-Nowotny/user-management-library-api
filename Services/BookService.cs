@@ -53,9 +53,10 @@ namespace library_api.Services
 			};
 		}
 
-		public Task<IEnumerable<BookDto>> SearchBooksAsync(string searchTerm)
+		public async Task<IEnumerable<BookDto>> SearchBooksAsync(string searchTerm)
 		{
-			throw new NotImplementedException();
+			var books = await _bookRepository.SearchBooksAsync(searchTerm);
+			return _mapper.Map<IEnumerable<BookDto>>(books);
 		}
 	}
 }

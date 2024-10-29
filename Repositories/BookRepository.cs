@@ -111,9 +111,11 @@ namespace library_api.Repositories
 			};
 		}
 
-		public Task<IEnumerable<Book>> SearchBooksAsync(string searchTerm)
+		public async Task<IEnumerable<Book>> SearchBooksAsync(string searchTerm)
 		{
-			throw new NotImplementedException();
+			return await _context.Books
+				.Where(b => b.Title.Contains(searchTerm) || b.Author.Contains(searchTerm) || b.ISBN.Contains(searchTerm))
+				.ToListAsync();
 		}
 	}
 }
