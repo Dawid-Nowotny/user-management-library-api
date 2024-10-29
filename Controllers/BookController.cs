@@ -1,4 +1,5 @@
-﻿using library_api.Models;
+﻿using library_api.DTOs;
+using library_api.Models;
 using library_api.Services;
 using library_api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,13 @@ namespace library_api.Controllers
 			{
 				return NotFound(e.Message);
 			}
+		}
+
+		[HttpGet("filter")]
+		public async Task<IActionResult> FilterAndSortBooks([FromQuery] FilterBooksDto filter)
+		{
+			var books = await _bookService.GetFilteredAndSortedBooksAsync(filter.Title, filter.Author, filter.ISBN, filter.SortBy);
+			return Ok(books);
 		}
 	}
 }

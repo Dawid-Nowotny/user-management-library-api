@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using library_api.DTOs;
-using library_api.Repositories;
 using library_api.Repositories.Interfaces;
 using library_api.Services.Interfaces;
 
@@ -25,7 +24,7 @@ namespace library_api.Services
 
 		public async Task<IEnumerable<BookDto>> GetBookInfoAsync(string identifier)
 		{
-			var books = await _bookRepository.GetBookInfoAsync(identifier);
+			var books = await _bookRepository.GetBookInfoByISBNAsync(identifier);
 
 			if (books == null || !books.Any())
 			{
@@ -33,6 +32,22 @@ namespace library_api.Services
 			}
 
 			return books.Select(book => _mapper.Map<BookDto>(book)).ToList();
+		}
+
+		public async Task<IEnumerable<BookDto>> GetFilteredAndSortedBooksAsync(string title, string author, string isbn, string sortBy)
+		{
+			var books = await _bookRepository.GetFilteredAndSortedBooksAsync(title, author, isbn, sortBy);
+			return _mapper.Map<IEnumerable<BookDto>>(books);
+		}
+
+		public Task<PagedResult<BookDto>> GetPagedBooksAsync(int pageNumber, int pageSize)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<BookDto>> SearchBooksAsync(string searchTerm)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
